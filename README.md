@@ -1,6 +1,9 @@
+
 # Governed Evidence Validator
 
 A deterministic evidence verification engine that treats large language models as untrusted proposers and independently verifies every returned claim against a canonical source document.
+
+<img width="1960" height="1666" alt="Hero" src="https://github.com/user-attachments/assets/5f749da6-1119-4434-9be7-13c48925b00b" />
 
 **Part of the Trustworthy AI Portfolio**
 
@@ -72,7 +75,7 @@ Rather than allowing the language model to evaluate its own output, GEV construc
 
 ### 1. Define the Task
 
-> **Placeholder:** `docs/img/gev_workflow_1.png`
+<img width="1932" height="921" alt="Workflow Step 1" src="https://github.com/user-attachments/assets/e5678fee-0f63-4564-854e-333f2539f1e3" />
 
 *Upload a source document, select a topic, and define the specific question to be answered.*
 
@@ -80,7 +83,7 @@ Rather than allowing the language model to evaluate its own output, GEV construc
 
 ### 2. Generate a Governed Session
 
-> **Placeholder:** `docs/img/gev_workflow_2.png`
+<img width="1930" height="1488" alt="Workflow Step 2" src="https://github.com/user-attachments/assets/5bfd3ba1-52be-46d8-9e3e-4073be628e20" />
 
 *GEV creates a governed session packet containing the canonical evidence map, execution instructions, and validation requirements. The packet can be processed by any compatible LLM.*
 
@@ -88,7 +91,7 @@ Rather than allowing the language model to evaluate its own output, GEV construc
 
 ### 3. Verify the Returned Response
 
-> **Placeholder:** `docs/img/gev_workflow_3.png`
+<img width="1960" height="1666" alt="Workflow step 3" src="https://github.com/user-attachments/assets/c8142689-ef20-456c-a70b-0b5cb95efbee" />
 
 *Paste the structured LLM response back into GEV. Every citation and quoted passage is independently verified against the canonical source before a final verdict is produced.*
 
@@ -96,7 +99,7 @@ Rather than allowing the language model to evaluate its own output, GEV construc
 
 ## Behind the Scenes
 
-> **Placeholder:** `docs/img/gev_architecture_overview.png`
+<img width="2500" height="742" alt="USER_GEV_Workflow" src="https://github.com/user-attachments/assets/31ae497e-b09f-42de-8930-05d4285d8503" />
 
 The workflow above is supported by a clear separation of responsibilities.
 
