@@ -1,0 +1,277 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Governed Evidence Validator</title>
+  <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+<div id="app">
+
+  <!-- SIDEBAR -->
+  <nav id="sidebar">
+    <div class="sidebar-header">
+      <div class="sidebar-program-name">Document Q&amp;A</div>
+      <div class="sidebar-title">Governed Evidence Validator</div>
+    </div>
+    <div class="sidebar-progress-section">
+      <div class="sidebar-progress-label"
+           data-tooltip="Each step updates as you work. Hover any term you don't recognise for a plain-language definition.">
+        Progress
+      </div>
+      <ul class="step-list">
+        <li class="step-item active" data-step="1">
+          <div class="step-num">1</div>
+          <span class="step-label">Upload Source Material</span>
+        </li>
+        <li class="step-item" data-step="2">
+          <div class="step-num">2</div>
+          <span class="step-label">Topic Selection</span>
+        </li>
+        <li class="step-item" data-step="3">
+          <div class="step-num">3</div>
+          <span class="step-label">Specific Question</span>
+        </li>
+      </ul>
+    </div>
+    <div class="sidebar-footer">
+      No API key required. Your document stays local.
+    </div>
+  </nav>
+
+  <!-- MAIN -->
+  <main id="main">
+
+    <!-- ====== STEP 1 — UPLOAD ====== -->
+    <section class="step-panel active" id="panel-1">
+      <div class="step-eyebrow">Step 1 of 3</div>
+      <h1 class="step-heading">What information do you want to use?</h1>
+      <p class="step-description">
+        Upload the contract, policy, or document you want to ask questions about.
+        Plain text (.txt) and text-based PDF (.pdf) files are supported.
+        You can upload multiple files — they will be treated as one combined document.
+      </p>
+
+      <div id="error-1" style="display:none"></div>
+
+      <div class="upload-zone" id="upload-zone">
+        <div class="upload-icon">📄</div>
+        <div class="upload-primary">Drop files here</div>
+        <p class="upload-secondary">
+          or <span id="upload-browse-link">browse to select files</span>
+        </p>
+        <p class="upload-secondary" style="margin-top:6px;font-size:12px">
+          Accepted: .pdf, .txt &nbsp;·&nbsp; Multiple files supported
+        </p>
+      </div>
+      <input type="file" id="file-input" multiple accept=".pdf,.txt" style="display:none">
+
+      <div class="file-chips" id="file-chips"></div>
+
+      <div class="step-actions">
+        <span class="spacer"></span>
+        <button class="btn btn-primary" id="btn-step1-next" disabled>
+          Continue <span style="font-size:12px">→</span>
+        </button>
+      </div>
+    </section>
+
+    <!-- ====== STEP 2 — TOPIC SELECTION ====== -->
+    <section class="step-panel" id="panel-2">
+      <div class="step-eyebrow">Step 2 of 3</div>
+      <h1 class="step-heading">What topic or area is your concern?</h1>
+      <p class="step-description">
+        Specify the topic or area of interest to verify in the document.
+      </p>
+
+      <div id="error-2" style="display:none"></div>
+
+      <!-- Silent routing container -->
+      <div id="topic-routing-container" style="margin-bottom: 20px;">
+        <!-- Will contain either a select dropdown or a text input with identical styling -->
+      </div>
+
+      <!-- Hidden elements for backward compatibility -->
+      <div style="display:none">
+        <input type="range" id="precision-slider" min="0" max="100" value="50">
+        <span id="slider-label-text">Balanced</span>
+      </div>
+
+      <div class="step-actions">
+        <button class="btn btn-outline" id="btn-step2-back">← Back</button>
+        <span class="spacer"></span>
+        <button class="btn btn-primary" id="btn-step2-next">
+          Continue <span style="font-size:12px">→</span>
+        </button>
+      </div>
+    </section>
+
+    <!-- ====== STEP 3 — SPECIFIC QUESTION ====== -->
+    <section class="step-panel" id="panel-3">
+      <div class="step-eyebrow">Step 3 of 3</div>
+      <h1 class="step-heading">What is your specific question?</h1>
+      <p class="step-description">
+        Enter your specific question about the document within the selected topic scope.
+      </p>
+
+      <div id="error-3" style="display:none"></div>
+
+      <div class="question-container" style="margin-bottom: 20px;">
+        <label class="input-label" for="question-field">Your Question</label>
+        <textarea class="text-input" id="question-field" rows="6"
+          placeholder="Enter your question..."></textarea>
+      </div>
+
+      <!-- Hidden elements for backward compatibility -->
+      <div style="display:none">
+        <span id="stat-words">—</span>
+        <span id="stat-sections">—</span>
+        <span id="stat-files">—</span>
+        <div id="structure-badge-wrap"></div>
+        <ul id="section-outline-list"></ul>
+        <div id="diagnostic-banner"></div>
+        <div id="review-question">—</div>
+        <div id="review-topic">—</div>
+        <span id="review-precision">—</span>
+        <div id="review-threshold-note"></div>
+        <div id="review-doc-summary"></div>
+      </div>
+
+      <div class="step-actions" style="margin-top: 30px;">
+        <button class="btn btn-outline" id="btn-step3-back">← Back</button>
+        <span class="spacer"></span>
+        <button class="btn btn-primary" id="btn-step3-approve">
+          Generate Session Document <span style="font-size:12px">→</span>
+        </button>
+      </div>
+    </section>
+
+    <!-- ====== STEP 4 — SESSION & VALIDATION ====== -->
+    <section class="step-panel" id="panel-4">
+      <div class="step-eyebrow">Session &amp; Validation</div>
+      <h1 class="step-heading">Session &amp; Validation</h1>
+      <p class="step-description">
+        Take this to your LLM. Download the session document, upload it to your LLM of choice, and paste the complete response below. The system will verify each answer against the document.
+      </p>
+
+      <div id="error-4" style="display:none"></div>
+      <!-- Hidden backward-compatibility elements so JS references do not throw -->
+      <div id="error-6" style="display:none"></div>
+      <textarea id="pass1-prompt-display" style="display:none"></textarea>
+      <textarea id="pass2-prompt-display" style="display:none"></textarea>
+      <span id="pass1-packet-size" style="display:none"></span>
+      <span id="pass2-packet-size" style="display:none"></span>
+      <textarea id="pass1-response-input" style="display:none"></textarea>
+      <textarea id="pass2-response-input" style="display:none"></textarea>
+      <button id="btn-submit-pass1" style="display:none"></button>
+      <button id="btn-submit-pass2" style="display:none"></button>
+      <div id="section-pass2" style="display:none"><div id="pass1-success-notice"></div><span id="pass1-success-text"></span></div>
+
+      <!-- SESSION DOCUMENT DOWNLOAD CARD -->
+      <div class="packet-block generated" style="margin-bottom: 24px;">
+        <div class="packet-block-header">
+          <div>
+            <div class="packet-block-title" style="font-size: 16px;">Session Document</div>
+            <div class="packet-block-subtitle" style="font-family: var(--font-mono); margin-top: 4px; color: var(--teal-dark);" id="session-doc-filename">
+              gev_session_document.md
+            </div>
+            <div class="packet-block-subtitle" style="margin-top: 6px;">
+              <span id="session-doc-size">—</span> characters — complete 2-pass session scripted for your LLM
+            </div>
+          </div>
+        </div>
+        <div class="packet-block-footer">
+          <button class="btn btn-purple" id="btn-download-session-document">⬇ Download Session Document</button>
+        </div>
+      </div>
+
+      <!-- PRIMER PROMPT CARD -->
+      <div class="packet-block generated" style="margin-bottom: 24px;">
+        <div class="packet-block-header">
+          <div>
+            <div class="packet-block-title" style="font-size: 16px;">Primer Prompt</div>
+            <div class="packet-block-subtitle">Copy and paste this message alongside your uploaded document file.</div>
+          </div>
+        </div>
+        <textarea class="prompt-textarea" id="session-primer-prompt" readonly style="height: 110px; font-family: var(--font-sans); font-size: 13.5px; line-height: 1.6;">Please process the attached session document completely. Follow the instructions inside it in order — complete Pass 1 first, then Pass 2 using your Pass 1 output. Return your complete response using the exact output delimiters specified at the end of the document. Do not add any text outside the delimited blocks.</textarea>
+        <div class="packet-block-footer">
+          <button class="btn btn-purple btn-sm" id="btn-copy-primer-prompt">Copy Primer Prompt</button>
+        </div>
+      </div>
+
+      <!-- INSTRUCTIONS -->
+      <div class="guided-steps" style="margin-bottom: 24px; border-left: none; padding-left: 0;">
+        <div class="guided-step-content" style="margin-left: 0;">
+          <div class="guided-step-title" style="font-size: 15px; margin-bottom: 10px;">Instructions:</div>
+          <ol style="margin-left: 20px; font-size: 14px; color: var(--text-mid); line-height: 1.8;">
+            <li>Download the session document above</li>
+            <li>Upload it to your LLM of choice (Claude, GPT, Gemini, etc.)</li>
+            <li>Let it run — it will complete both passes automatically</li>
+            <li>Copy the LLM's complete response and paste it below</li>
+          </ol>
+        </div>
+      </div>
+
+      <!-- PASTE ZONE FOR RAW RESPONSE -->
+      <div class="phase-tag inbound">↓ Paste your LLM's complete response</div>
+      <div class="paste-zone-wrap" style="margin-bottom: 16px;">
+        <div class="paste-zone-header">Your LLM's complete response</div>
+        <textarea class="paste-zone" id="session-raw-response-input" rows="12"
+          placeholder="Paste the full LLM response here (containing both [PASS1_START] and [PASS2_START] blocks)…"
+          style="min-height: 200px; font-family: var(--font-mono); font-size: 13px;"></textarea>
+      </div>
+      <div style="display:flex; justify-content:flex-end; margin-bottom:28px;">
+        <button class="btn btn-purple" id="btn-run-verification">Run Verification</button>
+      </div>
+
+      <!-- RESULTS (revealed after verification success) -->
+      <div id="section-results" style="display:none">
+        <hr class="divider">
+
+        <div class="grounding-score-bar">
+          <div class="grounding-score-label"
+               data-tooltip="How many answers were verified as exact quotes from your document. Answers marked Review Needed are not failures — they mean the system cannot verify them automatically.">
+            Verification Summary
+          </div>
+          <div class="grounding-score-value" id="grounding-score-value">—</div>
+          <div class="score-track">
+            <div class="score-fill" id="score-fill" style="width:0%"></div>
+          </div>
+          <div style="font-size:12px;color:var(--text-muted);margin-top:8px" id="score-sub-label">—</div>
+        </div>
+
+        <div class="sub-heading">Verdict by Claim</div>
+        <div class="verdict-cards" id="verdict-cards"></div>
+
+        <div class="audit-log">
+          <div class="audit-log-header">
+            <span class="audit-log-title"
+                  data-tooltip="An append-only record of every action the system took during this session. Download to save a permanent copy.">
+              Audit Log
+            </span>
+            <div style="display:flex;gap:8px">
+              <button class="btn btn-ghost btn-sm" id="btn-refresh-audit">Refresh</button>
+              <button class="btn btn-outline btn-sm" id="btn-download-audit">⬇ Download Log</button>
+            </div>
+          </div>
+          <div class="audit-log-body" id="audit-log-body">
+            <div class="audit-entry">
+              <span class="audit-ts">—</span>
+              <span class="audit-event">Loading…</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="step-actions">
+          <button class="btn btn-outline" id="btn-start-over">Start a New Session</button>
+        </div>
+      </div>
+    </section>
+
+  </main>
+</div>
+
+<script src="/static/app.js"></script>
+</body>
+</html>

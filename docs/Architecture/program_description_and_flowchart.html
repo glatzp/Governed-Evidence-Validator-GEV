@@ -1,0 +1,560 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Governed Evidence Validator — Program Description & Flowchart</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --primary-teal: #0f4c5c;
+      --primary-purple: #4a2c5a;
+      --bg-light: #f8f9fa;
+      --text-dark: #212529;
+      --text-muted: #6c757d;
+      --border-color: #dee2e6;
+      --card-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+      --teal-light: #e6f2f4;
+      --purple-light: #f3ebf6;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: 'Inter', sans-serif;
+      color: var(--text-dark);
+      background-color: #ffffff;
+      line-height: 1.6;
+      padding: 40px;
+    }
+
+    .container {
+      max-width: 1000px;
+      margin: 0 auto;
+    }
+
+    /* Print styling */
+    @media print {
+      body {
+        padding: 0;
+        font-size: 11pt;
+      }
+      .no-print {
+        display: none;
+      }
+      .page-break {
+        page-break-before: always;
+      }
+      .card {
+        box-shadow: none !important;
+        border: 1px solid var(--border-color) !important;
+      }
+      button {
+        display: none !important;
+      }
+      * {
+        -webkit-print-color-adjust: exact !important;
+        print-color-adjust: exact !important;
+      }
+    }
+
+    header {
+      margin-bottom: 40px;
+      border-bottom: 2px solid var(--primary-teal);
+      padding-bottom: 20px;
+      position: relative;
+    }
+
+    h1, h2, h3 {
+      font-family: 'Outfit', sans-serif;
+      font-weight: 600;
+    }
+
+    h1 {
+      color: var(--primary-teal);
+      font-size: 2.5rem;
+      margin-bottom: 8px;
+    }
+
+    .subtitle {
+      color: var(--text-muted);
+      font-size: 1.1rem;
+      font-weight: 400;
+    }
+
+    .print-btn {
+      position: absolute;
+      top: 10px;
+      right: 0;
+      background-color: var(--primary-teal);
+      color: white;
+      border: none;
+      padding: 10px 20px;
+      border-radius: 4px;
+      cursor: pointer;
+      font-weight: 500;
+      font-family: 'Inter', sans-serif;
+      transition: background-color 0.2s;
+    }
+
+    .print-btn:hover {
+      background-color: #0c3d4a;
+    }
+
+    section {
+      margin-bottom: 40px;
+    }
+
+    h2 {
+      color: var(--primary-teal);
+      font-size: 1.8rem;
+      margin-bottom: 20px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    h2::after {
+      content: '';
+      flex: 1;
+      height: 1px;
+      background-color: var(--border-color);
+    }
+
+    p {
+      margin-bottom: 15px;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 20px;
+      margin-bottom: 30px;
+    }
+
+    .card {
+      background-color: var(--bg-light);
+      border-radius: 8px;
+      padding: 24px;
+      border: 1px solid #e9ecef;
+      box-shadow: var(--card-shadow);
+    }
+
+    .card.teal-theme {
+      border-left: 4px solid var(--primary-teal);
+    }
+
+    .card.purple-theme {
+      border-left: 4px solid var(--primary-purple);
+    }
+
+    .card.neutral-theme {
+      border-left: 4px solid var(--text-muted);
+    }
+
+    .card h3 {
+      font-size: 1.3rem;
+      margin-bottom: 12px;
+    }
+
+    .card.teal-theme h3 {
+      color: var(--primary-teal);
+    }
+
+    .card.purple-theme h3 {
+      color: var(--primary-purple);
+    }
+
+    .card.neutral-theme h3 {
+      color: var(--text-dark);
+    }
+
+    ul, ol {
+      margin-left: 20px;
+      margin-bottom: 15px;
+    }
+
+    li {
+      margin-bottom: 8px;
+    }
+
+    /* Flowchart Container */
+    .flowchart-container {
+      background-color: #ffffff;
+      border: 1px solid var(--border-color);
+      border-radius: 8px;
+      padding: 20px;
+      text-align: center;
+      margin: 30px 0;
+      box-shadow: var(--card-shadow);
+    }
+
+    svg {
+      max-width: 100%;
+      height: auto;
+    }
+
+    /* Terminology section */
+    .term-grid {
+      display: grid;
+      grid-template-columns: 240px 1fr;
+      gap: 15px;
+      margin-bottom: 20px;
+    }
+
+    .term-name {
+      font-weight: 600;
+      color: var(--primary-teal);
+    }
+
+    .term-def {
+      color: var(--text-dark);
+    }
+
+    /* Wizard steps outline */
+    .step-timeline {
+      position: relative;
+      margin-left: 30px;
+      border-left: 2px solid var(--border-color);
+      padding-left: 20px;
+    }
+
+    .step-node {
+      position: relative;
+      margin-bottom: 30px;
+    }
+
+    .step-node::before {
+      content: '';
+      position: absolute;
+      left: -31px;
+      top: 4px;
+      width: 20px;
+      height: 20px;
+      border-radius: 50%;
+      background-color: #ffffff;
+      border: 3px solid var(--primary-teal);
+    }
+
+    .step-node.solution-step::before {
+      border-color: var(--primary-purple);
+    }
+
+    .step-title {
+      font-weight: 600;
+      font-size: 1.1rem;
+      margin-bottom: 4px;
+    }
+
+    .step-node.solution-step .step-title {
+      color: var(--primary-purple);
+    }
+
+    .step-node.problem-step .step-title {
+      color: var(--primary-teal);
+    }
+
+    .step-desc {
+      color: var(--text-muted);
+      font-size: 0.95rem;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <header>
+      <h1>Governed Evidence Validator</h1>
+      <p class="subtitle">Phase 2: Document Q&amp;A Module Architecture &amp; Execution Specification</p>
+      <button class="print-btn no-print" onclick="window.print()">Print / Save as PDF</button>
+    </header>
+
+    <!-- SECTION 1: PROGRAM OVERVIEW -->
+    <section>
+      <h2>System Concept &amp; Philosophy</h2>
+      <p>
+        The <strong>Governed Evidence Validator (GEV)</strong> is a document grounding and verification system. It provides a strict governance layer around the execution of large language models (LLMs) to ensure that every fact, quote, or claim returned to a user is objectively traceable to an authoritative source document (such as a union grievance procedure, contract, or policy document).
+      </p>
+      <p>
+        GEV operates on a core set of non-negotiable principles:
+      </p>
+      <div class="grid">
+        <div class="card teal-theme">
+          <h3>1. LLM Proposes, Program Verifies</h3>
+          <p>
+            The LLM is treated as an untrusted agent. It may propose facts or claim to find citations, but it has no authority to issue verdicts. Every proposed fact is cross-checked by the deterministic program layer using the <strong>Canonical Document Model</strong>.
+          </p>
+        </div>
+        <div class="card purple-theme">
+          <h3>2. Manual Hand-Off Scaffolding</h3>
+          <p>
+            The program never connects to an external LLM API at runtime. GEV structures task packets, and the user acts as the secure mediator, carrying prompts to the model of their choice and bringing response payloads back. This guarantees absolute data containment and model independence.
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <!-- SECTION 2: CANONICAL DOCUMENT MODEL -->
+    <section>
+      <h2>Canonical Document Model &amp; Segmentation</h2>
+      <p>
+        To perform rigorous string and offset matching, GEV translates uploaded documents into an immutable <strong>CanonicalDocument</strong> representation containing structured <strong>EvidenceUnit</strong> components.
+      </p>
+      <div class="grid">
+        <div class="card teal-theme">
+          <h3>Text Segmenter</h3>
+          <p>
+            Sections are divided into paragraph-sized chunks (Evidence Units) with a maximum size of 2,500 characters. The GEV segmenter splits text with hierarchical priority:
+          </p>
+          <ol>
+            <li>Splits on blank lines (double newlines) first to establish paragraph boundaries.</li>
+            <li>If a paragraph exceeds 2,500 characters, it splits on line breaks.</li>
+            <li>If line breaks are still oversized, it splits on sentence boundaries as a last resort.</li>
+          </ol>
+        </div>
+        <div class="card purple-theme">
+          <h3>Strict Index Traceability</h3>
+          <p>
+            Each Evidence Unit is mapped with absolute character indices (<code>char_start</code> and <code>char_end</code>) relative to the canonical concatenated document, a SHA-256 content hash, and its source file metadata. Verified claims are bound to a formal <strong>Provenance</strong> record. If an offset discrepancy is detected, the program raises a <code>VerificationError</code> and aborts verification.
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <div class="page-break"></div>
+
+    <!-- SECTION 3: DOCUMENT QUALITY DIAGNOSTICS -->
+    <section>
+      <h2>Document Quality Diagnostics</h2>
+      <p>
+        To preserve evidentiary integrity, GEV automatically runs a <strong>Document Quality Diagnostics</strong> evaluation immediately after a document is loaded. This check runs <strong>silently in the background</strong> to ensure that the document's structure and formatting will not interfere with the validator's deterministic matching algorithms.
+      </p>
+      
+      <div class="grid">
+        <div class="card neutral-theme" style="grid-column: span 2;">
+          <h3>Silent Background Diagnostics &amp; Audit Logging</h3>
+          <p>The diagnostics analyze five core quality signals to flag formatting issues that could hinder text matching:</p>
+          <ul>
+            <li><strong>Broken Word Rate</strong>: Checks if words are frequently split across lines or extracted word-by-word (common in scanned or poorly structured PDFs).</li>
+            <li><strong>Line Length</strong>: Flags average line lengths under 15 characters, indicating abnormal vertical alignment.</li>
+            <li><strong>Empty Sections</strong>: Identifies parsed sections containing no extractable text content.</li>
+            <li><strong>Malformed Tokens</strong>: Measures occurrences of replacement characters () or non-standard ASCII characters (OCR artifacts).</li>
+            <li><strong>Document Size</strong>: Warns if the document text is very short (under 500 characters).</li>
+          </ul>
+          <p style="margin-top: 15px;"><strong>Governance Integration:</strong> The diagnostics do not block user action or show banners in the Web UI. Instead, the resulting <code>DiagnosticReport</code> assigns a quality rating (<strong>GOOD</strong>, <strong>DEGRADED</strong>, or <strong>POOR</strong>) and writes details directly to the append-only audit trail via `DOCUMENT_QUALITY_CHECKED`. If quality is <strong>POOR</strong>, GEV logs a `DOCUMENT_QUALITY_POOR` audit event, which is mapped directly to the PUBS <em>Environmental Reconstruction</em> failure pattern to serve as a silent, permanent record of potential input quality risks.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- SECTION 4: FLOWCHART -->
+    <section class="page-break">
+      <h2>Interactive Verification Architecture</h2>
+      <p>
+        The system supports two interaction architectures: the consolidated <strong>Single-Trip Session Document</strong> (preferred for Web UI to combine LLM calls) and the <strong>Step-by-Step Interactive CLI</strong> (for detailed debugging).
+      </p>
+      
+      <div class="flowchart-container">
+        <!-- SVG FLOWCHART -->
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 820" width="900" height="820">
+          <defs>
+            <marker id="arrow" viewBox="0 0 10 10" refX="6" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+              <path d="M 0 1 L 10 5 L 0 9 z" fill="#495057" />
+            </marker>
+          </defs>
+
+          <!-- Swimlane Dividers -->
+          <line x1="300" y1="40" x2="300" y2="800" stroke="#dee2e6" stroke-width="1.5" stroke-dasharray="4" />
+          <line x1="600" y1="40" x2="600" y2="800" stroke="#dee2e6" stroke-width="1.5" stroke-dasharray="4" />
+
+          <!-- Swimlane Headers -->
+          <text x="150" y="30" text-anchor="middle" font-family="'Outfit', sans-serif" font-weight="600" font-size="14" fill="#0f4c5c">INBOUND / USER ROLE</text>
+          <text x="450" y="30" text-anchor="middle" font-family="'Outfit', sans-serif" font-weight="600" font-size="14" fill="#212529">GEV DETERMINISTIC ENGINE</text>
+          <text x="750" y="30" text-anchor="middle" font-family="'Outfit', sans-serif" font-weight="600" font-size="14" fill="#4a2c5a">OUTBOUND / LLM (AGENT 2)</text>
+
+          <!-- Step 1: User uploads source -->
+          <rect x="30" y="60" width="240" height="50" rx="6" fill="#e6f2f4" stroke="#0f4c5c" stroke-width="2" />
+          <text x="150" y="82" text-anchor="middle" font-family="'Inter', sans-serif" font-size="12" font-weight="600" fill="#0f4c5c">1. Upload Source Material</text>
+          <text x="150" y="98" text-anchor="middle" font-family="'Inter', sans-serif" font-size="10" fill="#6c757d">(.txt, .pdf files)</text>
+
+          <path d="M 270 85 L 320 85" fill="none" stroke="#495057" stroke-width="1.5" marker-end="url(#arrow)" />
+
+          <!-- Step 2: Quality Diagnostics (Silent) -->
+          <rect x="320" y="60" width="260" height="50" rx="6" fill="#f8f9fa" stroke="#6c757d" stroke-width="1.5" />
+          <text x="450" y="80" text-anchor="middle" font-family="'Inter', sans-serif" font-size="11" font-weight="600" fill="#212529">2. Silent Document Diagnostics</text>
+          <text x="450" y="96" text-anchor="middle" font-family="'Inter', sans-serif" font-size="9" fill="#6c757d">Runs in background &amp; logs to audit trail</text>
+
+          <path d="M 450 110 L 450 140" fill="none" stroke="#495057" stroke-width="1.5" marker-end="url(#arrow)" />
+
+          <!-- Step 3: Segmentation -->
+          <rect x="320" y="140" width="260" height="50" rx="6" fill="#f8f9fa" stroke="#495057" stroke-width="1.5" />
+          <text x="450" y="162" text-anchor="middle" font-family="'Inter', sans-serif" font-size="12" font-weight="600" fill="#212529">3. Canonical Document Model</text>
+          <text x="450" y="178" text-anchor="middle" font-family="'Inter', sans-serif" font-size="10" fill="#6c757d">Segments into EvidenceUnits</text>
+
+          <path d="M 450 190 L 450 200 L 270 200" fill="none" stroke="#495057" stroke-width="1.5" marker-end="url(#arrow)" />
+
+          <!-- Step 4: Topic Selection -->
+          <rect x="30" y="175" width="240" height="50" rx="6" fill="#e6f2f4" stroke="#0f4c5c" stroke-width="1.5" />
+          <text x="150" y="197" text-anchor="middle" font-family="'Inter', sans-serif" font-size="12" font-weight="600" fill="#0f4c5c">4. Topic Selection</text>
+          <text x="150" y="213" text-anchor="middle" font-family="'Inter', sans-serif" font-size="10" fill="#6c757d">Select outline section / manual topic</text>
+
+          <path d="M 150 225 L 150 255" fill="none" stroke="#495057" stroke-width="1.5" marker-end="url(#arrow)" />
+
+          <!-- Step 5: Specific Question -->
+          <rect x="30" y="255" width="240" height="50" rx="6" fill="#e6f2f4" stroke="#0f4c5c" stroke-width="1.5" />
+          <text x="150" y="277" text-anchor="middle" font-family="'Inter', sans-serif" font-size="12" font-weight="600" fill="#0f4c5c">5. Specific Question</text>
+          <text x="150" y="293" text-anchor="middle" font-family="'Inter', sans-serif" font-size="10" fill="#6c757d">Input query &amp; set matching threshold</text>
+
+          <path d="M 270 280 L 320 280" fill="none" stroke="#495057" stroke-width="1.5" marker-end="url(#arrow)" />
+
+          <!-- Step 6: Session Builder -->
+          <rect x="320" y="255" width="260" height="55" rx="6" fill="#f8f9fa" stroke="#495057" stroke-width="1.5" />
+          <text x="450" y="277" text-anchor="middle" font-family="'Inter', sans-serif" font-size="12" font-weight="600" fill="#212529">6. Session Doc &amp; Prompt Builder</text>
+          <text x="450" y="293" text-anchor="middle" font-family="'Inter', sans-serif" font-size="10" fill="#6c757d">Compiles Session Doc &amp; Primer Prompt</text>
+
+          <!-- Split paths based on Web vs CLI -->
+          <path d="M 320 280 L 150 280 L 150 325" fill="none" stroke="#495057" stroke-width="1.5" stroke-dasharray="3" marker-end="url(#arrow)" />
+          <text x="215" y="322" text-anchor="middle" font-family="'Inter', sans-serif" font-size="9" fill="#0f4c5c">Web UI Flow</text>
+
+          <path d="M 580 280 L 595 280 L 595 405 L 150 405 L 150 420" fill="none" stroke="#495057" stroke-width="1.5" stroke-dasharray="3" marker-end="url(#arrow)" />
+          <text x="500" y="400" text-anchor="middle" font-family="'Inter', sans-serif" font-size="9" fill="#495057">CLI Flow</text>
+
+          <!-- Web UI Consolidated Document -->
+          <rect x="30" y="325" width="240" height="50" rx="6" fill="#f3ebf6" stroke="#4a2c5a" stroke-width="2" />
+          <text x="150" y="347" text-anchor="middle" font-family="'Inter', sans-serif" font-size="12" font-weight="600" fill="#4a2c5a">7a. Single-Trip Session Doc</text>
+          <text x="150" y="363" text-anchor="middle" font-family="'Inter', sans-serif" font-size="9" fill="#8e53a3">(Consolidated prompts + text)</text>
+
+          <path d="M 270 350 L 610 350" fill="none" stroke="#495057" stroke-width="1.5" marker-end="url(#arrow)" />
+
+          <!-- CLI Interactive prompts -->
+          <rect x="30" y="420" width="240" height="50" rx="6" fill="#e6f2f4" stroke="#0f4c5c" stroke-width="1.5" />
+          <text x="150" y="442" text-anchor="middle" font-family="'Inter', sans-serif" font-size="11" font-weight="600" fill="#0f4c5c">7b. Interactive Prompts</text>
+          <text x="150" y="458" text-anchor="middle" font-family="'Inter', sans-serif" font-size="9" fill="#6c757d">(Step-by-step interactive hand-off)</text>
+
+          <path d="M 270 445 L 590 445 L 590 380 L 610 380" fill="none" stroke="#495057" stroke-width="1.5" marker-end="url(#arrow)" />
+
+          <!-- LLM Agent 2 execution -->
+          <rect x="610" y="330" width="260" height="70" rx="6" fill="#f3ebf6" stroke="#4a2c5a" stroke-width="1.5" />
+          <text x="740" y="355" text-anchor="middle" font-family="'Inter', sans-serif" font-size="12" font-weight="600" fill="#4a2c5a">LLM Sequential Execution</text>
+          <text x="740" y="372" text-anchor="middle" font-family="'Inter', sans-serif" font-size="10" fill="#6c757d">Pass 1 (Atoms) &amp; Pass 2 (Quotes)</text>
+          <text x="740" y="387" text-anchor="middle" font-family="'Inter', sans-serif" font-size="9" fill="#8e53a3">Separated by Delimiters</text>
+
+          <path d="M 740 400 L 740 520 L 270 520" fill="none" stroke="#495057" stroke-width="1.5" marker-end="url(#arrow)" />
+
+          <!-- Submit response -->
+          <rect x="30" y="495" width="240" height="50" rx="6" fill="#e6f2f4" stroke="#0f4c5c" stroke-width="1.5" />
+          <text x="150" y="517" text-anchor="middle" font-family="'Inter', sans-serif" font-size="12" font-weight="600" fill="#0f4c5c">8. Paste Delimited Response</text>
+          <text x="150" y="533" text-anchor="middle" font-family="'Inter', sans-serif" font-size="10" fill="#6c757d">Single paste triggers verify</text>
+
+          <path d="M 270 520 L 320 520" fill="none" stroke="#495057" stroke-width="1.5" marker-end="url(#arrow)" />
+
+          <!-- Delimiter Parser -->
+          <rect x="320" y="495" width="260" height="50" rx="6" fill="#f8f9fa" stroke="#495057" stroke-width="1.5" />
+          <text x="450" y="517" text-anchor="middle" font-family="'Inter', sans-serif" font-size="12" font-weight="600" fill="#212529">9. Response Delimiter Parser</text>
+          <text x="450" y="533" text-anchor="middle" font-family="'Inter', sans-serif" font-size="10" fill="#6c757d">Regex extracts Pass 1 / 2 blocks</text>
+
+          <path d="M 450 545 L 450 575" fill="none" stroke="#495057" stroke-width="1.5" marker-end="url(#arrow)" />
+
+          <!-- Deterministic Verification -->
+          <rect x="320" y="575" width="260" height="60" rx="6" fill="#f3ebf6" stroke="#4a2c5a" stroke-width="2" />
+          <text x="450" y="597" text-anchor="middle" font-family="'Inter', sans-serif" font-size="12" font-weight="600" fill="#4a2c5a">10. Deterministic Verification</text>
+          <text x="450" y="614" text-anchor="middle" font-family="'Inter', sans-serif" font-size="10" fill="#4a2c5a">Verifies offsets on CanonicalDocument</text>
+          <text x="450" y="627" text-anchor="middle" font-family="'Inter', sans-serif" font-size="9" fill="#8e53a3">(Raises VerificationError on failure)</text>
+
+          <path d="M 450 635 L 450 665" fill="none" stroke="#495057" stroke-width="1.5" marker-end="url(#arrow)" />
+
+          <!-- Cross-Document Conflict Checker -->
+          <rect x="320" y="665" width="260" height="50" rx="6" fill="#f8f9fa" stroke="#495057" stroke-width="1.5" />
+          <text x="450" y="687" text-anchor="middle" font-family="'Inter', sans-serif" font-size="12" font-weight="600" fill="#212529">11. Cross-Document Conflict Check</text>
+          <text x="450" y="703" text-anchor="middle" font-family="'Inter', sans-serif" font-size="10" fill="#6c757d">Identifies contradicting evidence</text>
+
+          <path d="M 450 715 L 450 745" fill="none" stroke="#495057" stroke-width="1.5" marker-end="url(#arrow)" />
+
+          <!-- Output Generation & Audit -->
+          <rect x="320" y="745" width="260" height="60" rx="6" fill="#f8f9fa" stroke="#6c757d" stroke-dasharray="3" stroke-width="1.5" />
+          <text x="450" y="767" text-anchor="middle" font-family="'Inter', sans-serif" font-size="12" font-weight="600" fill="#212529">12. Output &amp; Audit Log</text>
+          <text x="450" y="784" text-anchor="middle" font-family="'Inter', sans-serif" font-size="10" fill="#6c757d">Chain-of-evidence formatting</text>
+          <text x="450" y="797" text-anchor="middle" font-family="'Inter', sans-serif" font-size="9" fill="#6c757d">Logs session status to audit.jsonl</text>
+
+          <path d="M 320 775 L 270 775" fill="none" stroke="#495057" stroke-width="1.5" marker-end="url(#arrow)" />
+
+          <!-- User reviews results -->
+          <rect x="30" y="745" width="240" height="60" rx="6" fill="#f3ebf6" stroke="#4a2c5a" stroke-width="1.5" />
+          <text x="150" y="767" text-anchor="middle" font-family="'Inter', sans-serif" font-size="12" font-weight="600" fill="#4a2c5a">13. View Verdict Report</text>
+          <text x="150" y="784" text-anchor="middle" font-family="'Inter', sans-serif" font-size="10" fill="#6c757d">Pass / Human Review / Fail /</text>
+          <text x="150" y="797" text-anchor="middle" font-family="'Inter', sans-serif" font-size="10" fill="#6c757d">Conflict Detected / Absent</text>
+        </svg>
+      </div>
+    </section>
+
+    <div class="page-break"></div>
+
+    <!-- SECTION 5: WIZARD IMPLEMENTATION -->
+    <section>
+      <h2>The Three-Step Interactive Wizard (Web UI)</h2>
+      <p>
+        The user-facing experience is split into three distinct setup pages, followed by a unified Session &amp; Validation dashboard. A progress panel on the left maps the user's path, updating as they transition through the system.
+      </p>
+
+      <div class="step-timeline">
+        <div class="step-node problem-step">
+          <div class="step-title">Step 1 — Source Material</div>
+          <div class="step-desc">
+            The user uploads documents (.txt or .pdf files). The GEV supports loading multiple files, consolidating them in memory as a single authoritative corpus. Behind the scenes, GEV automatically evaluates document quality and compiles a <code>DiagnosticReport</code> to track input risks.
+          </div>
+        </div>
+
+        <div class="step-node problem-step">
+          <div class="step-title">Step 2 — Topic Selection</div>
+          <div class="step-desc">
+            GEV presents a list of dynamically parsed section headers or lets the user enter a manual topic. This defines the outline scope for the grounding verification.
+          </div>
+        </div>
+
+        <div class="step-node problem-step">
+          <div class="step-title">Step 3 — Specific Question</div>
+          <div class="step-desc">
+            The user inputs their specific question and initiates the verification session. GEV automatically compiles the prompts and document text into a single unified session document.
+          </div>
+        </div>
+
+        <div class="step-node solution-step">
+          <div class="step-title">Session &amp; Validation Dashboard</div>
+          <div class="step-desc">
+            The main hub for model interaction and validation. The user downloads the consolidated <strong>Session Document</strong>, copies the primer prompt into their LLM, lets the model complete both passes, and pastes the raw delimited response back into GEV to run verification and view the audit log.
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- SECTION 6: SPECIFICATION DETAILS -->
+    <section>
+      <h2>Verification Vocabulary &amp; Verdicts</h2>
+      <p>
+        Verdicts are computed deterministically. The program verifies if claims match source texts and classifies them as:
+      </p>
+      
+      <div class="term-grid">
+        <div class="term-name">Pass</div>
+        <div class="term-def">Verified verbatim quote. The proposed passage matches the source text above the configured precision threshold. Tied to a specific Evidence Unit and offset range. (Displayed as <strong>Pass</strong> in raw logs, mapped to <strong>GROUNDED</strong> in user interfaces).</div>
+
+        <div class="term-name">Human Review — Evidence Found</div>
+        <div class="term-def">The claim is a paraphrase, procedural instruction, or unknown type, but GEV successfully located corresponding evidence within the document (surfaced with match score). (Mapped to <strong>HUMAN_REVIEW_REQUIRED</strong> in user interfaces).</div>
+
+        <div class="term-name">Review Needed — Conflict Detected</div>
+        <div class="term-def">Warning issued if contradictory evidence is identified for the same claim across different sections or documents. (Mapped to <strong>HUMAN_REVIEW_REQUIRED</strong> with conflict warning details in user interfaces).</div>
+
+        <div class="term-name">Fail</div>
+        <div class="term-def">The claim could not be verified in the source text. Occurs either because a citation is unverified (failed string match) or the LLM failed to propose a supporting passage. (Mapped to <strong>CITATION_UNVERIFIED</strong> or <strong>CITATION_REQUIRED</strong> in user interfaces).</div>
+
+        <div class="term-name">Absent</div>
+        <div class="term-def">No responsive information or matching sections exist within the document for the user's question (Absence Detection).</div>
+      </div>
+    </section>
+  </div>
+</body>
+</html>
