@@ -224,6 +224,4 @@ A lightweight browser demonstration introducing the core concepts of Operational
 
 ## License
 
-This repository is provided for educational and portfolio purposes.
-
-Refer to the repository license for usage terms.
+This project is licensed under the MIT License. See the LICENSE file for details.
